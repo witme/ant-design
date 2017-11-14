@@ -314,4 +314,20 @@ describe('Table.rowSelection', () => {
     wrapper.update();
     expect(renderedNames(wrapper)).toEqual(['10', '11', '12', '13', '14', '15', '16', '17', '18', '19']);
   });
+
+  it('fix selection column on the left', () => {
+    const wrapper = render(createTable({
+      rowSelection: { fixed: true },
+    }));
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  it('fix selection column on the right', () => {
+    const wrapper = render(createTable({
+      rowSelection: { fixed: 'right' },
+    }));
+
+    expect(wrapper).toMatchSnapshot();
+  });
 });

@@ -50,6 +50,7 @@ export interface TableRowSelection<T> {
   onSelectInvert?: (selectedRows: Object[]) => any;
   selections?: SelectionDecorator[] | boolean;
   hideDefaultSelections?: boolean;
+  fixed?: boolean | 'left' | 'right';
 }
 
 export interface TableProps<T> {
@@ -648,6 +649,7 @@ export default class Table<T> extends React.Component<TableProps<T>, any> {
         key: 'selection-column',
         render: this.renderSelectionBox(rowSelection.type),
         className: selectionColumnClass,
+        fixed: rowSelection.fixed,
       };
       if (rowSelection.type !== 'radio') {
         const checkboxAllDisabled = data.every((item, index) => this.getCheckboxPropsByItem(item, index).disabled);
@@ -667,11 +669,17 @@ export default class Table<T> extends React.Component<TableProps<T>, any> {
           />
         );
       }
-      if (columns.some(column => column.fixed === 'left' || column.fixed === true)) {
+      if ('fixed' in rowSelection) {
+        selectionColumn.fixed = rowSelection.fixed;
+      } else if (columns.some(column => column.fixed === 'left' || column.fixed === true)) {
         selectionColumn.fixed = 'left';
       }
       if (columns[0] && columns[0].key === 'selection-column') {
         columns[0] = selectionColumn;
+      } else if (columns.length && columns[columns.length - 1].key === 'selection-column') {
+        columns[columns.length] = selectionColumn;
+      } else if (selectionColumn.fixed === 'right') {
+        columns.push(selectionColumn);
       } else {
         columns.unshift(selectionColumn);
       }
